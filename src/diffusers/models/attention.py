@@ -279,6 +279,7 @@ class BasicTransformerBlock(nn.Module):
                 dropout=dropout,
                 bias=attention_bias,
                 upcast_attention=upcast_attention,
+                cross_attention_norm='layer_norm',
             )  # is self-attn if encoder_hidden_states is none
         else:
             self.norm2 = None
