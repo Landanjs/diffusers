@@ -58,7 +58,7 @@ class Attention(nn.Module):
         bias=False,
         upcast_attention: bool = False,
         upcast_softmax: bool = False,
-        cross_attention_norm: Optional[str] = None,
+        cross_attention_norm: Optional[str] = 'layer_norm',
         cross_attention_norm_num_groups: int = 32,
         added_kv_proj_dim: Optional[int] = None,
         norm_num_groups: Optional[int] = None,
@@ -416,6 +416,7 @@ class AttnProcessor:
         if encoder_hidden_states is None:
             encoder_hidden_states = hidden_states
         elif attn.norm_cross:
+            print('NORMALIZING ENCODER_HIDDEN_STATES YA YA YA')
             encoder_hidden_states = attn.norm_encoder_hidden_states(encoder_hidden_states)
 
         key = attn.to_k(encoder_hidden_states)
