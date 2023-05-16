@@ -271,6 +271,7 @@ class BasicTransformerBlock(nn.Module):
                 if self.use_ada_layer_norm
                 else nn.LayerNorm(dim, elementwise_affine=norm_elementwise_affine)
             )
+            self.encoder_norm2 = nn.LayerNorm(cross_attention_dim)
             self.attn2 = Attention(
                 query_dim=dim,
                 cross_attention_dim=cross_attention_dim if not double_self_attention else None,
@@ -279,7 +280,6 @@ class BasicTransformerBlock(nn.Module):
                 dropout=dropout,
                 bias=attention_bias,
                 upcast_attention=upcast_attention,
-                cross_attention_norm='layer_norm',
             )  # is self-attn if encoder_hidden_states is none
         else:
             self.norm2 = None
@@ -328,7 +328,8 @@ class BasicTransformerBlock(nn.Module):
             )
             # TODO (Birch-San): Here we should prepare the encoder_attention mask correctly
             # prepare attention mask here
-
+            print('LAYER NORMING')
+            encoder_hidden_states = self.encoder_norm2(encoder_hidden_states)
             attn_output = self.attn2(
                 norm_hidden_states,
                 encoder_hidden_states=encoder_hidden_states,
